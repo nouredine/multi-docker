@@ -14,8 +14,9 @@ after_success:
   - docker build -t marley/multi-server ./server
   - docker build -t marley/multi-worker ./worker
 
+  # Log in to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
+  # take those images and push them to docker hub
   - docker push marley/multi-client
   - docker push marley/multi-nginx 
   - docker push marley/multi-server
