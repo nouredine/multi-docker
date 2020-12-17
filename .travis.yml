@@ -1,23 +1,38 @@
 sudo: required
-services: 
+services:
   - docker
 
 before_install:
-  - docker build -t nouredine/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t marley/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run nouredine/react-test npm test -- --coverage
+  - docker run marley/react-test npm test -- --coverage
 
 after_success:
-  - docker build -t nouredine/multi-client ./client
-  - docker build -t nouredine/multi-nginx ./nginx
-  - docker build -t nouredine/multi-server ./server
-  - docker build -t nouredine/multi-worker ./worker
+  - docker build -t marley/multi-client ./client
+  - docker build -t marley/multi-nginx ./nginx
+  - docker build -t marley/multi-server ./server
+  - docker build -t marley/multi-worker ./worker
 
-  # Log in to docker CLI
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # take those images and push them to docker hub
-  - docker push nouredine/multi-client
-  - docker push nouredine/multi-nginx 
-  - docker push nouredine/multi-server
-  - docker push nouredine/multi-worker
+
+  # Take those images and push them to docker hub
+  - docker push marley/multi-client
+  - docker push marley/multi-nginx
+  - docker push marley/multi-server
+  - docker push marley/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-us-east-2-593111263657"
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  # secret_access_key:
+  #   secure: $AWS_SECRET_KEY
+  secret_access_key: $AWS_SECRET_KEY

@@ -1,16 +1,16 @@
-version: '3'
-services: 
-  postgres: 
-    image: 'postgres:latest'
+version: "3"
+services:
+  postgres:
+    image: "postgres:latest"
   redis:
-    image: 'redis:latest'
+    image: "redis:latest"
   nginx:
     restart: always
     build:
       dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
-      - '8080:80'
+      - "8080:80"
   api:
     build:
       dockerfile: Dockerfile.dev
@@ -26,7 +26,6 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
-      - POSTGRES_HOST_AUTH_METHOD=trust
   client:
     build:
       dockerfile: Dockerfile.dev
